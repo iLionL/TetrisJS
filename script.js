@@ -321,6 +321,7 @@ document.onkeydown = function(e) {
         else if (e.keyCode === 38){ // вращаем фигуру 
             rotateTetro(); 
         } else if (e.keyCode === 32){ // по нажатию на spase фигура падает вниз
+            e.preventDefault()
             dropeTetro();
         }
         updateGameState();
@@ -347,10 +348,15 @@ pauseBtn.addEventListener('click', (e) =>{ // пауза
 });
 
 startBtn.addEventListener('click' , (e) => {
-    e.target.innerHTML = 'Start again';
-    isPaused = false;
-    gameTimeID = setTimeout(startGame, possibleLevels[currentLevel].speed);
-    gameOver.style.display = 'none';
+    if (e.target.innerHTML === 'Start') {
+        e.target.innerHTML = 'Start again';
+        isPaused = false;
+        gameTimeID = setTimeout(startGame, possibleLevels[currentLevel].speed);        
+    } else {
+        clearTimeout(gameTimeID)
+        gameOver.style.display = 'block';
+        setTimeout(() => window.location.reload(), 1000);    
+    }
 });
 
 scoreElem.innerHTML = score;
