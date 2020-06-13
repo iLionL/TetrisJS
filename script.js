@@ -29,16 +29,16 @@ let playfield = [
     [0,0,0,0,0,0,0,0,0,0],
 ];
 
-// let playfield = Array(20).fill(Array(10).fill(0)); // создаем массив поля с игрой 
+// let playfield = Array(20).fill(Array(10).fill(0)); 
 
-let score = 0; // подсчет очков 
+let score = 0; 
 let gameTimeID;
 let currentLevel = 1;
-let isPaused = true; // кнопка паузы (когда меняю на true по пробелу пауза включаеться и перестает работать сброс вниз фигуры?)
+let isPaused = true; 
 let possibleLevels = {
     1: {
         scorePerLine: 10,
-        speed: 400, // cкорость игры 
+        speed: 400, 
         nextLevelScore: 500,
     },
     2: {
@@ -101,8 +101,8 @@ let figures = {
     ],
 }
 
-let activeTetro = getNewTetro(); //координаты фигры на игровом поле, которая будет крутиться 
-let nextTetro = getNewTetro(); // следующая фигура которая будет падать за первой 
+let activeTetro = getNewTetro(); 
+let nextTetro = getNewTetro(); 
 
 function draw() {
     let mainInnerHTML = '';
@@ -146,24 +146,24 @@ function removePrevActiveTetro() {
 }
 
 function addActiveTetro() {
-    removePrevActiveTetro(); // функция для затерания фигуры которая осталась на поле 
+    removePrevActiveTetro(); 
     for ( let y = 0; y < activeTetro.shape.length; y++) {
         for ( let x = 0; x < activeTetro.shape[y].length; x++) {
             if (activeTetro.shape[y][x] === 1){
-                playfield[activeTetro.y + y][activeTetro.x + x] = activeTetro.shape[y][x]; // добавить к статическому х и у еще по х и у для отображения фигуры на поле
+                playfield[activeTetro.y + y][activeTetro.x + x] = activeTetro.shape[y][x];
             }
         }
     }
 }
 
-function rotateTetro() { // поворот фигуры
+function rotateTetro() { 
     const prevTetroState = activeTetro.shape;
 
     activeTetro.shape = activeTetro.shape[0].map((val, index) =>
      activeTetro.shape.map((row) => row[index]).reverse()
     );
 
-    if (hasCollisions()) { // что бы фигура не ломала другие фиксим
+    if (hasCollisions()) {
         activeTetro.shape = prevTetroState;
     }
 }
@@ -173,8 +173,8 @@ function hasCollisions() {
         for ( let x = 0; x < activeTetro.shape[y].length; x++) {
             if ( activeTetro.shape[y][x] && 
                 (playfield[activeTetro.y + y] === undefined ||
-                playfield[activeTetro.y + y][ activeTetro.x + x] === undefined || // проверка что бы не вышла фигура за пределы поля
-                playfield[activeTetro.y + y][ activeTetro.x + x] === 2) // что бы фигура не перезаписывала другие
+                playfield[activeTetro.y + y][ activeTetro.x + x] === undefined || 
+                playfield[activeTetro.y + y][ activeTetro.x + x] === 2) 
                 ) {
                 return true;
             }
@@ -183,7 +183,7 @@ function hasCollisions() {
     return false;
 }
 
-function removeFullLines() { //Проверить, есть ли заполненные линии и очистить их
+function removeFullLines() { 
     let canRemoveLine = true,
         filledLines = 0;
     for ( let y = 0; y < playfield.length ; y++) {
@@ -195,15 +195,15 @@ function removeFullLines() { //Проверить, есть ли заполне�
         }
         if (canRemoveLine) {
             playfield.splice(y, 1);
-            playfield.splice(0, 0, [0,0,0,0,0,0,0,0,0,0,]); // что бы вернуть пусиую строку удаленную
+            playfield.splice(0, 0, [0,0,0,0,0,0,0,0,0,0,]); 
             filledLines += 1;
         }
         canRemoveLine = true;
     } 
 
-    switch (filledLines) { // начисление доп очков за уничтожение сразу нескольких линий 
+    switch (filledLines) { 
         case 1:
-            score += possibleLevels[currentLevel].scorePerLine; // что бы очки начислялись за каждый уровень вместе с бонусами 
+            score += possibleLevels[currentLevel].scorePerLine; 
          break;
         case 2:
             score += possibleLevels[currentLevel].scorePerLine * 3;
@@ -218,19 +218,19 @@ function removeFullLines() { //Проверить, есть ли заполне�
 
     scoreElem.innerHTML = score;
     
-    if(score >= possibleLevels[currentLevel].nextLevelScore) { // переход на следующий уровень
+    if(score >= possibleLevels[currentLevel].nextLevelScore) { 
         currentLevel++;
         levelElem.innerHTML = currentLevel;
     }
 }
 
-function getNewTetro(){ // генерим новые фигурки
+function getNewTetro(){ 
     const possibleFigures = 'IOLJTSZ';
     const rand = Math.floor(Math.random ()*7);
     const newTetro = figures[possibleFigures[rand]];
 
-    return{ // выпадение целого обьекта рандумной формы
-        x: Math.floor((10 - newTetro[0].length)/2), // что бы фигура падала по середине ,
+    return{ 
+        x: Math.floor((10 - newTetro[0].length)/2), 
         y: 0,
         shape: newTetro,
     }; 
@@ -248,20 +248,20 @@ function fixTetro() {
 
 function moveTetroDown() {
     activeTetro.y += 1;
-    if (hasCollisions()) { // будет проверять вылазит ли фигура за поле 
+    if (hasCollisions()) { 
         activeTetro.y -= 1;
         fixTetro();
-        removeFullLines(); // удаление линии
-        activeTetro = nextTetro; // возращает полность новую фигуру и отцентрирует ее 
+        removeFullLines(); 
+        activeTetro = nextTetro;  
         if (hasCollisions()) {
-            reset(); // скидывает все состояние игры на начало
+            reset(); 
         // alert('game over');
         }
         nextTetro = getNewTetro();
     } 
 }
 
-function dropeTetro() { // проверка для Spase уперлась ли фигура при падении куда то 
+function dropeTetro() { 
     for ( let y = activeTetro.y; y < playfield.length; y++) {
         activeTetro.y += 1;
         if (hasCollisions()) {
@@ -272,8 +272,8 @@ function dropeTetro() { // проверка для Spase уперлась ли �
 }
 
 function reset() { 
-    isPaused = true; // ставим игру на пузу
-    clearTimeout(gameTimeID); // очтанавливаем цыкл игры
+    isPaused = true; 
+    clearTimeout(gameTimeID); 
     playfield = [
         [0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0],
@@ -302,25 +302,25 @@ function reset() {
 }
 
 document.onkeydown = function(e) {
-        if (!isPaused) { // если игра на паузе
-        if (e.keyCode === 37) { // двигаем фигуру влево
+        if (!isPaused) { 
+        if (e.keyCode === 37) { 
             activeTetro.x -= 1;
             if (hasCollisions()) {
                 activeTetro.x += 1;
             }
         }
-        else if (e.keyCode === 39){ // двигаем фигуру вправо
+        else if (e.keyCode === 39){ 
             activeTetro.x += 1;
-            if (hasCollisions()) { // фигура что бы не вышла вправо
+            if (hasCollisions()) { 
                 activeTetro.x -= 1;
             }
         }
-        else if (e.keyCode === 40){ // ускоряем фигуру 
+        else if (e.keyCode === 40){ 
             moveTetroDown();
         }
-        else if (e.keyCode === 38){ // вращаем фигуру 
+        else if (e.keyCode === 38){ 
             rotateTetro(); 
-        } else if (e.keyCode === 32){ // по нажатию на spase фигура падает вниз
+        } else if (e.keyCode === 32){ 
             e.preventDefault()
             dropeTetro();
         }
@@ -336,15 +336,15 @@ function updateGameState( ) {
     }
 }
 
-pauseBtn.addEventListener('click', (e) =>{ // пауза
-    if (e.target.innerHTML === 'Pause') { // "е" что бы взять событие когда игра на паузе и возобновить ее
+pauseBtn.addEventListener('click', (e) =>{ 
+    if (e.target.innerHTML === 'Pause') { 
         e.target.innerHTML = 'Continue'
         clearTimeout(gameTimeID);
     } else {
         e.target.innerHTML = 'Pause'
         gameTimeID = setTimeout(startGame, possibleLevels[currentLevel].speed);
     }
-   isPaused = !isPaused; // что бы игра продолжалась присваеваю "!"
+   isPaused = !isPaused; 
 });
 
 startBtn.addEventListener('click' , (e) => {
